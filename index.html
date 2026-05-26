@@ -632,23 +632,46 @@
 <div id="petals"></div>
 
 <!-- Hidden autoplay music -->
-<audio id="bg-music" loop preload="auto" style="display:none;">
+<audio id="bg-music" preload="auto" style="display:none;">
   <source src="https://raw.githubusercontent.com/OmarZahran1/omar-fayrouz-wedding/main/Song.mp3" type="audio/mpeg"/>
 </audio>
 <script>
   (function(){
     var audio = document.getElementById('bg-music');
-    audio.currentTime = 36;
+    var started = false;
+
     function tryPlay(){
+      if(started) return;
+      audio.play().then(function(){
+        started = true;
+      }).catch(function(){});
+    }
+
+    // Once enough is loaded, seek to 36 then play
+    audio.addEventListener('canplay', function(){
+      audio.currentTime = 36;
+      tryPlay();
+    }, {once: true});
+
+    // On loop, jump back to 36 instead of 0
+    audio.addEventListener('timeupdate', function(){
+      if(audio.duration && audio.currentTime >= audio.duration - 0.3){
+        audio.currentTime = 36;
+        audio.play().catch(function(){});
+      }
+    });
+
+    // Fallback: on first user interaction
+    function onInteract(){
       audio.currentTime = 36;
       audio.play().catch(function(){});
+      document.removeEventListener('click', onInteract);
+      document.removeEventListener('touchstart', onInteract);
+      document.removeEventListener('scroll', onInteract);
     }
-    // Try immediately
-    tryPlay();
-    // Also try on first user interaction in case browser blocks autoplay
-    document.addEventListener('click', function(){tryPlay();}, {once:true});
-    document.addEventListener('touchstart', function(){tryPlay();}, {once:true});
-    document.addEventListener('scroll', function(){tryPlay();}, {once:true});
+    document.addEventListener('click', onInteract);
+    document.addEventListener('touchstart', onInteract);
+    document.addEventListener('scroll', onInteract);
   })();
 </script>
 
