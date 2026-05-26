@@ -632,13 +632,25 @@
 <div id="petals"></div>
 
 <!-- Hidden autoplay music -->
-<iframe
-  id="bg-music"
-  src="https://www.youtube.com/embed/GxldQ9eX2wo?autoplay=1&start=36&loop=1&playlist=GxldQ9eX2wo&controls=0&mute=0"
-  allow="autoplay"
-  style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;"
-  frameborder="0"
-></iframe>
+<audio id="bg-music" loop preload="auto" style="display:none;">
+  <source src="https://raw.githubusercontent.com/OmarZahran1/omar-fayrouz-wedding/main/Song.mp3" type="audio/mpeg"/>
+</audio>
+<script>
+  (function(){
+    var audio = document.getElementById('bg-music');
+    audio.currentTime = 36;
+    function tryPlay(){
+      audio.currentTime = 36;
+      audio.play().catch(function(){});
+    }
+    // Try immediately
+    tryPlay();
+    // Also try on first user interaction in case browser blocks autoplay
+    document.addEventListener('click', function(){tryPlay();}, {once:true});
+    document.addEventListener('touchstart', function(){tryPlay();}, {once:true});
+    document.addEventListener('scroll', function(){tryPlay();}, {once:true});
+  })();
+</script>
 
 <!-- LIGHTBOX -->
 <div id="lightbox">
